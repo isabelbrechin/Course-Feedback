@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+  <title>Research Ethics Board Consent Feedback Form</title>
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='DAL_icon.png') }}"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+</head>
+
+<body>
+  <img src="{{ url_for('static', filename='DAL_logo.png') }}" class="icon" />
+  <h3>Research Ethics Board Consent Feedback Form</h3>
+  <p>This is web application is designed to give you feedback about your REB consent form. Provide the information of the principal contact of your research team and textual content of the consent form near the bottom of the page. The application will save the response for future improvement and generate feedback for you to help you improve your consent form.</p>
+  <form action="/" method="post">
+    <label for="name">Principal Investigator:</label><br>
+    <input type="text" id="name" name="name" placeholder="The main REB form contact."><br>
+    <label for="email">Investigator Dalhousie Email:</label><br>
+    <input type="text" id="email" name="email" placeholder="Main contact's email."><br>
+    <label for="consent">Consent Form Content:</label><br>
+    <textarea name="consent" placeholder="Provide the text of your consent form here." required /></textarea>
+    <input type="submit" value="Submit" />
+  </form>
+  <h3>Response content:</h3>
+  {% if result %}
+  <div class="result">{{ result }}</div>
+  {% else %}
+  <p>Response content will be provided here and emailed to the address provided.</p>
+  {% endif %}
+</body>
