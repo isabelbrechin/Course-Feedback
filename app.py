@@ -23,23 +23,27 @@ def index():
             model="gpt-3.5-turbo",
             temperature=0.5,
             messages=[
-                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, and provide a summary."},
+                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, and provide a summary. Please format your response with 'Sentiment:', followed by 'Keywords:', and end with 'Summary:'. "},
                 {"role": "user", "content": feedback_content}
             ]
         )
 
-        # Assuming the response is structured as expected, directly extracting it
+        # Parsing the structured response from OpenAI
         analysis_result = response.choices[0].message.content
+        parts = analysis_result.split("\n")
+        sentiment = parts[0].replace("Sentiment: ", "").strip()
+        keywords = parts[1].replace("Keywords: ", "").strip()
+        summary = parts[2].replace("Summary: ", "").strip()
 
+        # Insert feedback and analysis results into the database
         conn = get_db_connection()
-        # Insert feedback content and analysis result into the database
         conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
-        feedback_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
-        conn.execute("INSERT INTO analysis (feedback_id, result) VALUES (?, ?)", (feedback_id, analysis_result))
+        conn.execute("INSERT INTO analysis (sentiment, keywords, summary) VALUES (?, ?, ?)", 
+                     (sentiment, keywords, summary))
         conn.commit()
         conn.close()
 
-        # Thank the student and show a message or redirect
+        # Redirect or inform the user that feedback has been submitted
         return redirect(url_for("index", result="Thank you for your feedback!"))
 
     result = request.args.get("result")
