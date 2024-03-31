@@ -12,5 +12,4 @@ CREATE TABLE analysis (
     sentiment TEXT,
     keywords TEXT,
     summary TEXT,
-    FOREIGN KEY (feedback_id) REFERENCES feedback(id)
 );
