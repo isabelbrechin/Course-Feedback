@@ -13,8 +13,19 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def generate_compassionate_response():
+    # Function to generate a compassionate thank you message using GPT-3.5
+    response = client.Completion.create(
+        model="gpt-3.5-turbo",  # Ensure we're specifying the GPT-3.5 model
+        prompt="Generate a compassionate thank you message for a student who has just submitted feedback.",
+        temperature=0.7,
+        max_tokens=60,
+    )
+    return response.choices[0].text
+
 @app.route("/", methods=("GET", "POST"))
 def index():
+    compassionate_response = ""
     if request.method == "POST":
         feedback_content = request.form["feedback"]  # Adjusted to capture feedback content
 
@@ -46,8 +57,8 @@ def index():
         # Redirect or inform the user that feedback has been submitted
         return redirect(url_for("index", result="Thank you for your feedback!"))
 
-    result = request.args.get("result")
-    return render_template("index.html", result=result)
+    compassionate_response = generate_compassionate_response()
+    return render_template("index.html", compassionate_response=compassionate_response)
 
 if __name__ == "__main__":
     app.run(debug=True)
