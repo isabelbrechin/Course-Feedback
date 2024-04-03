@@ -11,5 +11,6 @@ CREATE TABLE analysis (
     feedback_id INTEGER PRIMARY KEY,
     sentiment TEXT,
     keywords TEXT,
-    summary TEXT
+    summary TEXT,
+    recommended_actions TEXT 
 );
