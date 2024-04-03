@@ -3,7 +3,6 @@ import sqlite3
 from flask import Flask, redirect, render_template, request, url_for
 from openai import OpenAI
 
-# Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
@@ -14,9 +13,8 @@ def get_db_connection():
     return conn
 
 def generate_compassionate_response():
-    # Function to generate a compassionate thank you message using GPT-3.5
     response = client.Completion.create(
-        model="gpt-3.5-turbo",  # Ensure we're specifying the GPT-3.5 model
+        model="gpt-3.5-turbo",
         prompt="Generate a compassionate thank you message for a student who has just submitted feedback.",
         temperature=0.7,
         max_tokens=60,
@@ -27,9 +25,8 @@ def generate_compassionate_response():
 def index():
     compassionate_response = ""
     if request.method == "POST":
-        feedback_content = request.form["feedback"]  # Adjusted to capture feedback content
+        feedback_content = request.form["feedback"]
 
-        # Using 'messages' as per the original file for a chat completion task
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             temperature=0.5,
@@ -39,14 +36,12 @@ def index():
             ]
         )
 
-        # Parsing the structured response from OpenAI
         analysis_result = response.choices[0].message.content
         parts = analysis_result.split("\n")
         sentiment = parts[0].replace("Sentiment: ", "").strip()
         keywords = parts[1].replace("Keywords: ", "").strip()
         summary = parts[2].replace("Summary: ", "").strip()
 
-        # Insert feedback and analysis results into the database
         conn = get_db_connection()
         conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
         conn.execute("INSERT INTO analysis (sentiment, keywords, summary) VALUES (?, ?, ?)", 
@@ -54,7 +49,6 @@ def index():
         conn.commit()
         conn.close()
 
-        # Redirect or inform the user that feedback has been submitted
         return redirect(url_for("index", result="Thank you for your feedback!"))
 
     compassionate_response = generate_compassionate_response()
