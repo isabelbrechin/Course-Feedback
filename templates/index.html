@@ -9,11 +9,37 @@
 <body>
   <img src="{{ url_for('static', filename='DAL_logo.png') }}" class="icon">
   <h3>Student Feedback Form</h3>
+  
+  <!-- Guidelines for Providing Feedback -->
+  <div class="feedback-guidelines">
+    <h4>Guidelines for Providing Effective Feedback</h4>
+    <ul>
+      <li><strong>Be specific:</strong> Provide clear examples to support your observations.</li>
+      <li><strong>Be objective:</strong> Focus on the course content and delivery rather than personal preferences.</li>
+      <li><strong>Be constructive:</strong> Offer suggestions for how the course or teaching methods could be improved.</li>
+      <li><strong>Be concise:</strong> Keep your feedback to the point to ensure it is easy to understand and act upon.</li>
+    </ul>
+  </div>
+  
   <p>This web application is designed to collect anonymous feedback about your learning experience. Your responses are completely anonymous and will help us improve teaching methods and course materials. Please share your thoughts below.</p>
+  
+  {% if suggestions %}
+    <p><strong>Suggestions for improving your feedback:</strong></p>
+    <p>{{ suggestions }}</p>
+  {% endif %}
+  
   <form action="/" method="post">
     <label for="feedback">Your Feedback:</label><br>
-    <textarea id="feedback" name="feedback" placeholder="Enter your feedback here." required></textarea><br>
+    {% if feedback_content %}
+      <textarea id="feedback" name="feedback" required>{{ feedback_content }}</textarea><br>
+    {% else %}
+      <textarea id="feedback" name="feedback" placeholder="Enter your feedback here." required></textarea><br>
+    {% endif %}
     <input type="submit" value="Submit">
+    {% if feedback_content %}
+      <!-- Include a hidden input to indicate resubmission -->
+      <input type="hidden" name="resubmit" value="true">
+    {% endif %}
   </form>
 
   <!-- Display the compassionate response if it exists -->
