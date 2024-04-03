@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Feedback Form</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='DAL_icon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+  <img src="{{ url_for('static', filename='DAL_logo.png') }}" class="icon">
+  <h3>Student Feedback Form</h3>
+  <p>This web application is designed to collect anonymous feedback about your learning experience. Your responses are completely anonymous and will help us improve teaching methods and course materials. Please share your thoughts below.</p>
+  <form action="/" method="post">
+    <label for="feedback">Your Feedback:</label><br>
+    <textarea id="feedback" name="feedback" placeholder="Enter your feedback here." required></textarea><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <!-- Display the compassionate response if it exists -->
+  {% if compassionate_response %}
+    <div class="compassionate-response">
+        <p>{{ compassionate_response }}</p>
+    </div>
+  {% else %}
+    <p>Your feedback is valuable to us. Thank you for taking the time to share your thoughts.</p>
+  {% endif %}
+</body>
+</html>
