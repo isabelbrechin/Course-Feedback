@@ -50,54 +50,59 @@ def index():
     compassionate_response = ""
     suggestions = ""
     feedback_content = ""
-    analysis_response = {"sentiment": "", "keywords": "", "summary": ""}
+    analysis_content = ""
+    sentiment = ""
+    keywords = ""
+    summary = ""
+    recommended_actions = ""
+
     if request.method == "POST":
         feedback_content = request.form.get("feedback", "")
         
         if 'resubmit' in request.form:
             compassionate_response = generate_compassionate_response()
         else:
-            # For initial submissions, generate analysis and suggestions
             suggestions = generate_feedback_suggestions(feedback_content)
-
-        # Using 'messages' for a chat completion task with OpenAI for analysis
-        analysis_response = openai.chat.completions.create(
+            
+            analysis_response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, and provide a summary.Please also include your recommended action for the professor that is reading the student feedback. These actions can include updates or changes to course material, changes in teaching methods like pace adjusments, increasing engagement by having more class discussions, or improving the clarity of course assessment instructions or the fairness of the teachers evaluations. Please format your response with 'Sentiment:', followed by 'Keywords:', followed by 'Summary:, followed by 'Recommended Actions:'."},
+                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, provide a summary, and include a recommended action for the professor based on the student feedback. Please format your response with 'Sentiment:', followed by 'Keywords:', followed by 'Summary:, followed by 'Recommended Actions:'."},
                 {"role": "user", "content": feedback_content}
             ],
             temperature=0.5,
             max_tokens=60,
-        )
+            )
 
         analysis_content = analysis_response.choices[0].message.content.strip()
+
         parts = analysis_content.split("\n")
 
-        # Initialize variables to store the results
-        sentiment = ""
-        keywords = ""
-        summary = ""
-        recommended_actions = ""
+            # Initialize variables for sentiment, keywords, summary, and recommended_actions
+        sentiment_parts = []
+        keywords_parts = []
+        summary_parts = []
+        recommended_actions_parts = []
 
-        # Check that the list has the expected number of parts before accessing
-        parts = analysis_content.split("\n")
+            # Check that the list has the expected number of parts before accessing
         if len(parts) > 0:
-            sentiment_parts = parts[0].split(": ")
-        sentiment = sentiment_parts[1].strip() if len(sentiment_parts) > 1 else ""
+                sentiment_parts = parts[0].split(": ")
+                sentiment = sentiment_parts[1].strip() if len(sentiment_parts) > 1 else ""
         if len(parts) > 1:
-         keywords_parts = parts[1].split(": ")
-         keywords = keywords_parts[1].strip() if len(keywords_parts) > 1 else ""
+                keywords_parts = parts[1].split(": ")
+                keywords = keywords_parts[1].strip() if len(keywords_parts) > 1 else ""
         if len(parts) > 2:
-            summary_parts = parts[2].split(": ")
-            summary = summary_parts[1].strip() if len(summary_parts) > 1 else ""
+                summary_parts = parts[2].split(": ")
+                summary = summary_parts[1].strip() if len(summary_parts) > 1 else ""
         if len(parts) > 3:
-            recommended_actions_parts = parts[3].split(": ")
-            recommended_actions = recommended_actions_parts[1].strip() if len(recommended_actions_parts) > 1 else ""
+                recommended_actions_parts = parts[3].split(": ")
+                recommended_actions = recommended_actions_parts[1].strip() if len(recommended_actions_parts) > 1 else ""
+                
    
     conn = get_db_connection()
-    conn.execute("INSERT INTO feedback (content, sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?, ?)", 
-             (feedback_content, sentiment, keywords, summary, recommended_actions))
+    conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
+    conn.execute("INSERT INTO analysis (sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?)", 
+                     (sentiment, keywords, summary, recommended_actions))
     conn.commit()
     conn.close()
 
