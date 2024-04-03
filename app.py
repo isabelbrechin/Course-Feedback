@@ -30,11 +30,35 @@ def generate_compassionate_response():
     # Access the message content directly
     return response.choices[0].message.content.strip()
 
+def generate_feedback_suggestions(feedback):
+    response = openai.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{
+            'role': 'system',
+            'content': 'Your task is to provide constructive suggestions for improving student feedback.'
+        }, {
+            'role': 'user',
+            'content': feedback
+        }],
+        temperature=0.5,
+        max_tokens=150,
+    )
+    return response.choices[0].message.content.strip()
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     compassionate_response = ""
+    suggestions = ""
+    feedback_content = ""
+    analysis_result = {"sentiment": "", "keywords": "", "summary": ""}
     if request.method == "POST":
         feedback_content = request.form.get("feedback", "")
+        
+        if 'resubmit' in request.form:
+            compassionate_response = generate_compassionate_response()
+        else:
+            # For initial submissions, generate analysis and suggestions
+            suggestions = generate_feedback_suggestions(feedback_content)
 
         # Using 'messages' for a chat completion task with OpenAI for analysis
         analysis_response = openai.chat.completions.create(
@@ -54,6 +78,7 @@ def index():
         keywords = parts[1].split(": ")[1] if len(parts) > 1 else ""
         summary = parts[2].split(": ")[1] if len(parts) > 2 else ""
 
+       
         conn = get_db_connection()
         conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
         conn.execute("INSERT INTO analysis (sentiment, keywords, summary) VALUES (?, ?, ?)", 
@@ -61,9 +86,7 @@ def index():
         conn.commit()
         conn.close()
 
-        compassionate_response = generate_compassionate_response()
-
-    return render_template("index.html", compassionate_response=compassionate_response)
+    return render_template("index.html", compassionate_response=compassionate_response, suggestions=suggestions, feedback_content=feedback_content)
 
 if __name__ == "__main__":
     app.run(debug=True)
