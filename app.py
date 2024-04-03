@@ -72,13 +72,25 @@ def index():
         )
 
         # Access the message content directly
-        analysis_result = analysis_response.choices[0].message.content
-        parts = analysis_result.split("\n")
-        sentiment = parts[0].split(": ")[1] if len(parts) > 0 else ""
-        keywords = parts[1].split(": ")[1] if len(parts) > 1 else ""
-        summary = parts[2].split(": ")[1] if len(parts) > 2 else ""
+        analysis_content = analysis_response.choices[0].message.content.strip()
+        parts = analysis_content.split("\n")
 
-       
+        # Initialize variables to store the results
+        sentiment = ""
+        keywords = ""
+        summary = ""
+
+        # Check that the list has the expected number of parts before accessing
+        if len(parts) > 0:
+            sentiment_parts = parts[0].split(": ") 
+        sentiment = sentiment_parts[1] if len(sentiment_parts) > 1 else ""
+        if len(parts) > 1:
+            keywords_parts = parts[1].split(": ")
+            keywords = keywords_parts[1] if len(keywords_parts) > 1 else ""
+        if len(parts) > 2:
+            summary_parts = parts[2].split(": ")
+            summary = summary_parts[1] if len(summary_parts) > 1 else ""
+
         conn = get_db_connection()
         conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
         conn.execute("INSERT INTO analysis (sentiment, keywords, summary) VALUES (?, ?, ?)", 
