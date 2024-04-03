@@ -30,9 +30,12 @@ The Course-Feedback-Analysis App addresses this problem by automating the collec
 ## Features
 - Anonymous feedback submission by students.
 - Automated sentiment analysis and keyword extraction using OpenAI's GPT-3.5.
-- Summary generation for quick insight.
+- Summary generation for quick insights into students feedback.
+- Generate suggestions for students to improve the quality of their feedback.
+- Allow students to resubmit their feedback after reviewing suggestions.
 - Responsive web design for accessibility across various devices.
 - Compassionate response generation to acknowledge student participation.
+
 
 ## Prerequisites
 - Python 3.x
