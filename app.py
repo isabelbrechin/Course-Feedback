@@ -50,7 +50,7 @@ def index():
     compassionate_response = ""
     suggestions = ""
     feedback_content = ""
-    analysis_result = {"sentiment": "", "keywords": "", "summary": ""}
+    analysis_response = {"sentiment": "", "keywords": "", "summary": ""}
     if request.method == "POST":
         feedback_content = request.form.get("feedback", "")
         
