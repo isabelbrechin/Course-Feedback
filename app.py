@@ -14,7 +14,7 @@ def get_db_connection():
 
 def generate_compassionate_response():
     response = client.Completion.create(
-        model="gpt-3.5-turbo",
+        model="text-gpt-3.5-turbo",
         prompt="Generate a compassionate thank you message for a student who has just submitted feedback.",
         temperature=0.7,
         max_tokens=60,
