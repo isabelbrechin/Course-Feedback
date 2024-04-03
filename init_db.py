@@ -9,7 +9,9 @@ with open('schema.sql') as f:
     cur.executescript(script)
 
 cur.execute("INSERT INTO feedback (content) VALUES (?)", ('This is a sample piece of feedback',))
-cur.execute("INSERT INTO analysis (sentiment, keywords, summary) VALUES (?, ?, ?)", ('postitive', 'keywordkeyword', 'This feedback is generally posisitive, here is a summary.'))
+feedback_id = cur.lastrowid  # Capturing the ID of the inserted feedback
+cur.execute("INSERT INTO analysis (feedback_id, sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?, ?)",
+              (feedback_id, 'Positive', 'participation, engagement', 'The feedback is generally positive, with suggestions for more class discussions.', 'Consider incorporating more interactive activities to increase class engagement.'))
 
 connection.commit()
 connection.close()
