@@ -12,5 +12,5 @@ CREATE TABLE analysis (
     sentiment TEXT,
     keywords TEXT,
     summary TEXT,
-    recommended_actions TEXT 
+    recommended_actions TEXT  -- Make sure this column is defined
 );
