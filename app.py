@@ -3,7 +3,9 @@ import sqlite3
 from flask import Flask, redirect, render_template, request, url_for
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=os.environ.get(".env"),
+    )
 
 app = Flask(__name__)
 
@@ -13,8 +15,8 @@ def get_db_connection():
     return conn
 
 def generate_compassionate_response():
-    response = client.Completion.create(
-        model="text-gpt-3.5-turbo",
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
         prompt="Generate a compassionate thank you message for a student who has just submitted feedback.",
         temperature=0.7,
         max_tokens=60,
