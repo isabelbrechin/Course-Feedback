@@ -22,22 +22,27 @@ def generate_compassionate_response():
     )
     return response.choices[0].text.strip()
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     compassionate_response = ""
     if request.method == "POST":
         feedback_content = request.form.get("feedback", "")
 
+        # Using 'messages' for a chat completion task with OpenAI for analysis
         analysis_response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                temperature=0.5,
-                messages=[
-                    {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, and provide a summary. Please format your response with 'Sentiment:', followed by 'Keywords:', and end with 'Summary:'. "},
-                    {"role": "user", "content": feedback_content}
-                ]
-            )
+            model="gpt-3.5-turbo",
+            temperature=0.5,
+            max_tokens=60,
+            messages=[
+                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, and provide a summary. Please format your response with 'Sentiment:', followed by 'Keywords:', and end with 'Summary:'."},
+                {"role": "user", "content": feedback_content}
+            ]
+        )
 
-        analysis_result = analysis_response.choices[0].message["content"]
+        # Correctly parsing the structured response from OpenAI
+        # Assuming the response is a single string with new lines separating sentiment, keywords, and summary
+        analysis_result = analysis_response.choices[0].message.content  # Accessing the content attribute directly
         parts = analysis_result.split("\n")
         sentiment = parts[0].replace("Sentiment: ", "").strip()
         keywords = parts[1].replace("Keywords: ", "").strip()
