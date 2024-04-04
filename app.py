@@ -76,16 +76,24 @@ def index():
         summary = ""
         recommended_actions = ""
 
-        if len(parts) > 0:
-                sentiment = parts[0].split(": ")[1].strip()
-        if len(parts) > 1:
-                keywords = parts[1].split(": ")[1].strip()
-        if len(parts) > 2:
-                summary = parts[2].split(": ")[1].strip()
-        if len(parts) > 3:
-                recommended_actions = parts[3].split(": ")[1].strip()
+        try:
+            sentiment = parts[0].split("Sentiment: ")[1].strip() if "Sentiment:" in parts[0] else ""
+        except IndexError:
+                sentiment = ""
+            
+        try:
+            keywords = parts[1].split("Keywords: ")[1].strip() if "Keywords:" in parts[1] else ""
+        except IndexError:
+                keywords = ""
+        try:
+            summary = parts[2].split("Summary: ")[1].strip() if "Summary:" in parts[2] else ""
+        except IndexError:
+                summary = ""
+        try:
+            recommended_actions = parts[3].split("Recommended Actions: ")[1].strip() if "Recommended Actions:" in parts[3] else ""
+        except IndexError:
+                recommended_actions = ""
 
-   
         conn = get_db_connection()
         conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
         conn.execute("INSERT INTO analysis (sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?)", 
