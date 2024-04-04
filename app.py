@@ -27,7 +27,6 @@ def generate_compassionate_response():
         temperature=0.7,
         max_tokens=60,
     )
-    # Access the message content directly
     return response.choices[0].message.content.strip()
 
 def generate_feedback_suggestions(feedback):
@@ -35,7 +34,7 @@ def generate_feedback_suggestions(feedback):
         model="gpt-3.5-turbo",
         messages=[{
             'role': 'system',
-            'content': 'Your task is to provide constructive suggestions for improving student feedback.'
+            'content': 'Your task is to provide constructive suggestions for improving student feedback to a professor about a course.'
         }, {
             'role': 'user',
             'content': feedback
@@ -50,11 +49,6 @@ def index():
     compassionate_response = ""
     suggestions = ""
     feedback_content = ""
-    analysis_content = ""
-    sentiment = ""
-    keywords = ""
-    summary = ""
-    recommended_actions = ""
 
     if request.method == "POST":
         feedback_content = request.form.get("feedback", "")
@@ -67,44 +61,37 @@ def index():
             analysis_response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Analyze this student feedback for sentiment, extract keywords, provide a summary, and include a recommended action for the professor based on the student feedback. Please format your response with 'Sentiment:', followed by 'Keywords:', followed by 'Summary:, followed by 'Recommended Actions:'."},
+                {"role": "system", "content": "You are an assistant to a university professor. Provide a detailed analysis of student feedback including sentiment, keywords, and a summary. Additionally, suggest specific, actionable recommendations that the professor could take to improve the course based on the feedback. Please format your response with 'Sentiment:', followed by 'Keywords:', followed by 'Summary:, followed by 'Recommended Actions:'." },
                 {"role": "user", "content": feedback_content}
             ],
             temperature=0.5,
-            max_tokens=60,
+            max_tokens=250,
             )
 
         analysis_content = analysis_response.choices[0].message.content.strip()
-
         parts = analysis_content.split("\n")
 
-            # Initialize variables for sentiment, keywords, summary, and recommended_actions
-        sentiment_parts = []
-        keywords_parts = []
-        summary_parts = []
-        recommended_actions_parts = []
+        sentiment = ""
+        keywords = ""
+        summary = ""
+        recommended_actions = ""
 
-            # Check that the list has the expected number of parts before accessing
         if len(parts) > 0:
-                sentiment_parts = parts[0].split(": ")
-                sentiment = sentiment_parts[1].strip() if len(sentiment_parts) > 1 else ""
+                sentiment = parts[0].split(": ")[1].strip()
         if len(parts) > 1:
-                keywords_parts = parts[1].split(": ")
-                keywords = keywords_parts[1].strip() if len(keywords_parts) > 1 else ""
+                keywords = parts[1].split(": ")[1].strip()
         if len(parts) > 2:
-                summary_parts = parts[2].split(": ")
-                summary = summary_parts[1].strip() if len(summary_parts) > 1 else ""
+                summary = parts[2].split(": ")[1].strip()
         if len(parts) > 3:
-                recommended_actions_parts = parts[3].split(": ")
-                recommended_actions = recommended_actions_parts[1].strip() if len(recommended_actions_parts) > 1 else ""
-                
+                recommended_actions = parts[3].split(": ")[1].strip()
+
    
-    conn = get_db_connection()
-    conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
-    conn.execute("INSERT INTO analysis (sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?)", 
+        conn = get_db_connection()
+        conn.execute("INSERT INTO feedback (content) VALUES (?)", (feedback_content,))
+        conn.execute("INSERT INTO analysis (sentiment, keywords, summary, recommended_actions) VALUES (?, ?, ?, ?)", 
                      (sentiment, keywords, summary, recommended_actions))
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 
     return render_template("index.html", compassionate_response=compassionate_response, suggestions=suggestions, feedback_content=feedback_content)
 
