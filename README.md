@@ -9,7 +9,6 @@ This web application is a generative AI-powered tool designed to enhance the edu
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
@@ -18,8 +17,14 @@ This web application is a generative AI-powered tool designed to enhance the edu
 ## Problem Statement
 In the traditional educational setting, collecting and analyzing student feedback is often a manual and time-consuming process. Professors find it challenging to derive meaningful conclusions from vast amounts of qualitative data, and as a result, vital insights for improving course delivery are often overlooked.
 
+Additionally, the quality of student feedback varies considerably. Research indicates that consistent quality in student feedback can significantly improve professors' capacity to understand and incorporate student suggestions.
+
+
 ## Innovation and Solution
 The Course-Feedback-Analysis App addresses this problem by automating the collection and analysis of feedback. It applies natural language processing to understand the context and emotions behind student responses, allowing educators to quickly grasp student sentiment and identify areas for improvement.
+
+Furthermore, the app encourages students to enhance the quality of their feedback through AI-powered suggestions, fostering an environment of continuous improvement and effective communication between students and their professors.
+
 
 ## Technological Stack
 - **Frontend**: HTML, CSS
@@ -28,7 +33,7 @@ The Course-Feedback-Analysis App addresses this problem by automating the collec
 - **Hosting**: Initially intended for Azure, now hosted on GitHub due to Azure credits limitation.
 
 ## Features
-- Anonymous feedback submission by students.
+- Feedback submission by students.
 - Automated sentiment analysis and keyword extraction using OpenAI's GPT-3.5.
 - Summary generation for quick insights into students feedback.
 - Generate suggestions for students to improve the quality of their feedback.
@@ -69,11 +74,35 @@ To install this application:
     ```
 
 ## Usage
-To run the application on your desktop server, execute:
+
+After installing the Course Feedback Analysis app, you can start using it with the following steps:
+
+1. **Starting the Application**:
+   To launch the application, navigate to the app's directory in your terminal and run:
+
     ```
     python -m flask app app run
     ```
-Visit `http://127.0.0.1:5000/` in your web browser to view the application.
+This will start the Flask server, and you should see output indicating that the server is running, typically on `http://127.0.0.1:5000/`.
+
+2. **Accessing the Application**:
+Open a web browser and visit `http://127.0.0.1:5000/`. This will take you to the homepage of the application.
+
+3. **Submitting Feedback**:
+- On the homepage, you'll find a form where students can enter and submit their course feedback.
+- After submitting feedback, students will receive suggestions on how they can improve their feedback for more constructive communication.
+
+4. **Reviewing Submissions** (For Professors):
+- Currently, to review the analysis of the feedback, professors/administrators need to access the database directly. This process will be updated in future versions for easier access through the application interface.
+
+-Testing the Database: 
+    To ensure the database is functioning correctly, navigate back to the appropriate directory in command, and then run python db_test.py
+
+- Accessing the Database:
+   The application stores feedback and analysis in an SQLite database named `database.db`. To access this database, navigate to your sqlite3 app and open the database.db file.
+
+- Reviewing Data:
+The results of the query will provide you with the feedback ID, sentiment analysis, extracted keywords, and summary. Review these to gain insights into student feedback and determine areas for improvement in the course.
 
 ## License
 This project is made available under the MIT License. See the [LICENSE](LICENSE) file for more details.
