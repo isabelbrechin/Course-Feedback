@@ -21,7 +21,7 @@
     </ul>
   </div>
   
-  <p>This web application is designed to collect anonymous feedback about your learning experience. Your responses are completely anonymous and will help us improve teaching methods and course materials. Please share your thoughts below.</p>
+  <p>This web application is designed to collect feedback about your learning experience. Your responses will help us improve teaching methods and course materials. Please share your thoughts below.</p>
   
   {% if suggestions %}
     <p><strong>Suggestions for improving your feedback:</strong></p>
@@ -35,12 +35,15 @@
     {% else %}
       <textarea id="feedback" name="feedback" placeholder="Enter your feedback here." required></textarea><br>
     {% endif %}
-    <input type="submit" value="Submit">
+    
+    <!-- Adjust the button value based on whether feedback_content is present -->
     {% if feedback_content %}
-      <!-- Include a hidden input to indicate resubmission -->
+      <input type="submit" value="Resubmit">
       <input type="hidden" name="resubmit" value="true">
+    {% else %}
+      <input type="submit" value="Submit">
     {% endif %}
-  </form>
+</form>
 
   <!-- Display the compassionate response if it exists -->
   {% if compassionate_response %}
