@@ -115,6 +115,7 @@ This project is made available under the MIT License. See the [LICENSE](LICENSE)
 - Thanks to Dalhousie University for the inspiration behind the project.
 - OpenAI for providing the AI technology that powers the feedback analysis.
 - Based on code from Colin Conrads REBtrainer and Snaptutor web applications.
+- ChatGPT assisted with developing the parsing structure of app.py. 
 
 ## Contact
 For support, feedback, or contributions, contact `is417236@dal.ca` or open an issue in this GitHub repository.
